@@ -41,6 +41,18 @@ export default defineConfig((command, mode, isSsrBuild, isPreview) => {
         vueJsx(),
         vueDevTools(),
       ],
+      server: {
+        proxy: {
+          '/api': {
+            target: 'http://localhost:3000',
+            changeOrigin: true,
+            // pathRewrite: { // 重写路径 webpack中的老写法 针对vue2或老的vue3项目--- 该选项在 vite 中已被弃用 ---
+            //   '^/api': ''
+            // },
+            rewrite: (path: string) => path.replace(/^\/api/, '')// 
+          }
+        }
+      },
       resolve: {
         alias: {
           '@': fileURLToPath(new URL('./src', import.meta.url))

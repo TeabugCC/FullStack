@@ -4,7 +4,7 @@
  * @Description: 
  */
 import axios from 'axios'
-const baseURL = ''
+const baseURL = '/api'
 const timeout = 1000
 const request = axios.create({
   baseURL,

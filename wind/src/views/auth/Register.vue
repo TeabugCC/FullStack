@@ -6,7 +6,7 @@
           <span>🚀 开启 M6 全栈时代</span>
         </div>
       </template>
-      <el-form ref="registerForm" :model="registerForm" :rules="formRules" label-position="top">
+      <el-form ref="registerFormRef" :model="registerForm" :rules="formRules" label-position="top">
         <el-form-item prop="username" label="用户名">
           <el-input v-model="registerForm.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
@@ -21,7 +21,7 @@
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="registerForm.email" placeholder="请输入邮箱"></el-input>
         </el-form-item>
-        <el-form-item prop="code" label="验证码"></el-form-item>
+        <!-- <el-form-item prop="code" label="验证码"></el-form-item> -->
         <el-button class="submit-btn" @click="submitForm(registerFormRef!)" type="primary" plain
           :loading="userStore.registerLoading">
           注册
@@ -80,17 +80,17 @@ const formRules = {
 const submitForm = async (registerFormRef: FormInstance | undefined) => {
   if (!registerFormRef) return;
   console.log('注册表单数据:', registerFormRef)
-  await registerFormRef.validate(async (valid) => {
-    if (valid) {
-      console.log('注册表单验证通过:', registerForm)
-      await userStore.registerUser(registerForm)
-      ElMessage.success('注册成功！');
-    } else {
-      console.log('注册表单验证失败')
-      ElMessage.error('注册表单验证失败');
-      // return false
-    }
-  })
+  const valid = await registerFormRef.validate()
+  console.log('校验完毕')
+  if (valid) {
+    console.log('注册表单验证通过:', registerForm)
+    await userStore.registerUser(registerForm)
+    ElMessage.success('注册成功！');
+  } else {
+    console.log('注册表单验证失败')
+    ElMessage.error('注册表单验证失败');
+    // return false
+  }
 }
 
 </script>

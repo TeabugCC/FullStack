@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
     async registerUser(payload: any) {
       this.registerLoading = true;
       try {
-        const { data } = await axios.post('/api/auth/register', payload);
+        const { data } = await axios.post('/api/users', payload);
         return data
       } catch (err: any) {
         const errorMsg = err.response?.data?.message || 'Registration failed';
