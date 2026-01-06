@@ -8,7 +8,7 @@ export class User {
   username: string;
   @Column() // 普通列，存储用户邮箱
   email: string;
-  @Column() // 普通列，存储用户密码
+  @Column({ select: false }) // 普通列，存储用户密码 且在查询时默认不返回该字段
   password: string;
   @Column({ default: true }) // 普通列，存储用户是否激活，默认值为 true
   isActive: boolean;

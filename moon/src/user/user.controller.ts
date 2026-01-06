@@ -14,16 +14,28 @@ export class UserController {
   @ApiResponse({ status: 201, description: '用户创建成功' }) //描述成功响应的HTTP状态码和含义
   @ApiResponse({ status: 400, description: '参数错误' })
   createUser(@Body() createUserDto: CreateUserDto) { //body与requestbody的区别在于body是express的请求体，而requestbody是nestjs的装饰器，用于提取请求体数据
-    console.log('接收到数据:', createUserDto); // 看看控制台有没有打印
+    console.log('register 接收到数据:', createUserDto); // 看看控制台有没有打印
     // return { message: '请求成功了', data: createUserDto };
     return this.userService.createUser(createUserDto);
   }
   @Get() // 处理GET请求，获取所有用户
+  @ApiOperation({ summary: '获取全部用户' })
   findAllUsers() {
     return this.userService.findAllUsers();
   }
   @Get(':id') // 处理GET请求，获取指定ID的用户
+  @ApiOperation({ summary: '根据用户ID获取用户信息' })
   findUserById(@Param('id') id: string) { // 使用@Param装饰器提取路由参数,即数据提取
     return { message: `获取ID为${id}的用户` };
+  }
+  @Post('login')
+  @ApiOperation({ summary: '用户登录' })
+  async login(@Body() body: any) {
+    console.log('login 接收到数据:', body);
+    const user = await this.userService.findUserByUsername(body);
+    if (!user) {
+      // throw new UnauthorizedException('用户名或密码错误');
+    }
+    return user
   }
 }
