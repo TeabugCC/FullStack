@@ -16,6 +16,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   // 设置swagger文档的访问路径
   SwaggerModule.setup('api-docs', app, document);
+  // main.ts 全局配置 ClassSerializerInterceptor，用作拦截器拦截各种配置@Exclude的字段。此处注销，是因为在现代的后端开发中，更推荐在具体的控制器或方法上使用 ClassSerializerInterceptor 拦截器，以实现更细粒度的控制和更好的代码可读性。或者在app.module.ts中全局配置
+// const { Reflector } = app.get(HttpAdapterHost);
+// app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   await app.listen(3000);
 }
 bootstrap();

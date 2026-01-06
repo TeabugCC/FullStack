@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, ClassSerializerInterceptor } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';// ConfigService 用于加载和管理应用配置
 import { TypeOrmModule } from '@nestjs/typeorm';// TypeOrmModule 用于集成 TypeORM 数据库模块
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 // import databaseConfig from './config/dataBase.config';
 // import { config } from 'process';
 // 如果连接过程中遇到 ConnectionRefused 报错，记得检查 .env 里的账号密码是否和你的 MySQL 实例一致哦！
@@ -83,6 +84,17 @@ import { UserModule } from './user/user.module';
     // 运行阶段：useFactory 被触发，从 ConfigService 拿到具体的数据库参数，TypeORM 正式发起数据库连接。
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService
+    // 全局配置 ClassSerializerInterceptor，用作拦截器拦截各种配置@Exclude的字段。此处在app.module.ts中全局配置
+    // 为什么全局注册比手动在main.ts里 app.use 好？
+
+    // 依赖注入：你可以让 NestJS 自动处理构造函数里的依赖。
+
+    // 作用域一致：通过 AppModule 注册的拦截器属于 NestJS 上下文，可以轻松访问其他 Service。
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: ClassSerializerInterceptor, // 全局使用 ClassSerializerInterceptor 拦截器
+    // }
+  ],
 })
 export class AppModule { }

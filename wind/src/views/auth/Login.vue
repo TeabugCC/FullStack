@@ -70,7 +70,7 @@ const submitForm = async (formRef: FormInstance | undefined) => {
     ElMessage.success('登陆成功！');
     if (flag) {
       // 跳转到首页
-      window.location.href = '/';
+      // window.location.href = '/';
     }
   } else {
     console.log('登陆表单验证失败')
