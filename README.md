@@ -1,5 +1,6 @@
 # FullStack
 A respository includes vue3+vite+pinia, nest  and mySql.
+
 技术架构：微前端 ➕ Monorepo
 参考 
 https://juejin.cn/post/7225800207329230905
