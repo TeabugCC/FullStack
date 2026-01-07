@@ -4,11 +4,17 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
 import { Repository } from "typeorm";
 import * as bcrypt from 'bcryptjs';
+import { JwtService } from "@nestjs/jwt";
+import { LoginResponseDto } from "./dto/create-user.dto";
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) // 注入User实体对应的存储库
-    private userRepository: Repository<User> // TypeORM的Repository模式
+    private userRepository: Repository<User>, // TypeORM的Repository模式
+    // TODO:可以考虑引入日志服务，用于记录用户操作日志
+    // TODO: 鉴定权限与用户信息是否要拆分
+    private jwtService: JwtService,
+
   ) { }
   private users = []; // 用于存储用户数据的数组
   // Repository Pattern（仓库模式）是一种设计模式，用于抽象数据访问层，提供对数据库操作的统一接口
@@ -26,7 +32,7 @@ export class UserService {
   findAllUsers() {
     return this?.users;
   }
-  async findUserByUsername({ username, password }) {
+  async findUserByUsername({ username, password }): Promise<LoginResponseDto> {
     const user = await this.userRepository.findOne({ where: { username }, select: ['id', 'username', 'email', 'password'] });
     console.log('service user', user);
     // return { message: `获取username为${username}的用户` };
@@ -34,10 +40,10 @@ export class UserService {
       const isMatch = await bcrypt.compare(password, user.password)
       if(isMatch){
         delete user.password; // 删除密码字段，避免泄露
-        return user;
+        return {...user, access_token: this.jwtService.sign({ id: user.id, username: user.username })}; // 生成JWT令牌
       }
     } else {
-      throw new Error('用户不存在');
+      throw new Error('账号或密码错误');// 抛出错误，表示用户不存在或密码不匹配。避免泄露具体信息。TODO: 可以自定义异常类
     }
   }
 }
